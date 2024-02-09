@@ -67,7 +67,7 @@ const Paginas = () => {
                                 </button>
                                 <button className="carousel-control-next" onClick={nextSlide}>
                                     <span className="carousel-control-next-icon bg-dark" aria-hidden="true"></span>
-                                    <span className="visually-hidden">Next</span>
+                                    <span className="visually-hidden">Nex<t/span>
                                 </button>
                             </div>
                         </div>

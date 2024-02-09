@@ -77,7 +77,7 @@ export const DashboardMenu = [
 		children: [
 			{ id: uuid(), link: '/authentication/sign-in', name: 'Iniciar Sesion' },
 			{ id: uuid(), link: '/authentication/sign-up', name: 'Registrarse' },
-			{ id: uuid(), link: '/authentication/forget-password', name: 'Forget Password' }
+			{ id: uuid(), link: '/authentication/forget-password', name: 'Olvidó su contraseña' }
 		]
 	},
 	{

@@ -28,7 +28,7 @@ export default function CUbicacion() {
 
     const handleEnviarIdClick = (id) => {
         setEditItemId(id);
-        fetch(`./api/db.json`)
+        fetch(`./api/db.json`) //
         .then((response) => response.json())
         .then((json) => {
             const data: any[] = json.serviciosES;

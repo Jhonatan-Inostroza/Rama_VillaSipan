@@ -1,5 +1,5 @@
 export default function CAdorno() {
-
+{/*
   return (
     <>
       <div>
@@ -15,4 +15,5 @@ export default function CAdorno() {
       </div>
     </>
   )
+  */}
 }

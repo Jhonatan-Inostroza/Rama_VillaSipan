@@ -24,7 +24,7 @@ export default function EstructuraInicio() {
         <Card className='p-0'>
           <CTop />
           <div className="x_content" >
-            <CAdorno />
+            {/*<CAdorno />*/}
             <div className="container">
               <div className="row g-5">
                 {datos.map((fila, index) => (
