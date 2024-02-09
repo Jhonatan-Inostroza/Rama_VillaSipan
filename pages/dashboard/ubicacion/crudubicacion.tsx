@@ -27,19 +27,19 @@ const Crudubicacion = () => {
     const filteredMenus = datos.filter((fila) =>
         (fila.titulo.toLowerCase().includes(searchTerm.toLowerCase())));
 
-        useEffect(() => {
-            const verificador = window.location.pathname.split('/');
-            const url = verificador[verificador.length - 1];
-            fetch('../../api/db.json')
-                .then(response => response.json())
-                .then(json => {
-                    const data: any[] = json.pgserviciosvs;
-                    const filtrado = data.filter(fila => fila.categoria === url);
-                    setDatos(filtrado);
-                    setUbicacion(url);
-                })
-                .catch(error => console.error('Error al obtener datos:', error));
-        }, []);
+    useEffect(() => {
+        const verificador = window.location.pathname.split('/');
+        const url = verificador[verificador.length - 1];
+        fetch('../../api/db.json')
+            .then(response => response.json())
+            .then(json => {
+                const data: any[] = json.serviciosES;
+                const filtrado = data.filter(fila => fila.categoria === url);
+                setDatos(filtrado);
+                setUbicacion(url);
+            })
+            .catch(error => console.error('Error al obtener datos:', error));
+    }, []);
     const handleRegistrarClick = () => {
         setLgShow(true);
         setFormData({
@@ -72,24 +72,33 @@ const Crudubicacion = () => {
                 console.error('Error al obtener datos para editar:', error);
             });
     };
+
     const handleEnviarIdClick = (id) => {
-        setEditItemId(id);
-        fetch(`http://localhost:3001/serviciosES/${id}`)
-            .then((response) => response.json())
-            .then((data) => {
-                setFormData({
-                    id: data.id,
-                    categoria: data.categoria,
-                    titulo: data.titulo,
-                    texto: data.texto,
-                    estado: data.estado,
-                    imagen: data.imagen
+        // Asegúrate de que la URL sea la correcta
+        fetch(`../../api/db.json`) //
+        .then((response) => response.json())
+        .then((json) => {
+            const data: any[] = json.serviciosES;
+
+            const obj = data.find(x => x.id == id);
+            setFormData({
+                id: obj.id,
+                categoria: obj.categoria,
+                titulo: obj.titulo,
+                texto: obj.texto,
+                estado: obj.estado,
+                imagen: obj.imagen
                 });
             })
             .catch((error) => {
                 console.error('Error al obtener datos para editar:', error);
             });
-    }
+    };
+    
+
+
+
+
     const handleSaveClick = () => {
         if (editItemId) {
             fetch(`http://localhost:3001/serviciosES/${editItemId}`, {
@@ -199,14 +208,13 @@ const Crudubicacion = () => {
                 <Col xl={12} lg={12} md={12} xs={12}>
                     <Card>
                         <Card.Body>
-                            <div className="row mb-4">
-                                <div className="col-md-7 col-lg-8">
+                        <div className="row mb-4">
+                            <div className="col-md-7 col-lg-8">
                                     <div className="container px-4 text-center">
                                         <div className="row gx-5">
-                                            <div className="accordion" id="accordionExample">
+                                            <div className="accordion" >
                                                 <div id="collapseOne" className="accordion-collapse collapse show"
                                                     data-bs-parent="#accordionExample">
-
                                                     <div className="row">
                                                         <div className="col-md-6 pe-0">
                                                             <h1 className="fw-bold cProyect">{formData.titulo}</h1>
@@ -218,7 +226,7 @@ const Crudubicacion = () => {
                                                     <div className="row">
                                                         <div className="col-md-12 border borderProyect border-3 p-1">
                                                             <div className="embed-responsive ratio ratio-16x9">
-                                                                <iframe src={formData.imagen} className="w-100 h-100" style={{ border: 'none', borderRadius: 'inherit' }} allowFullScreen></iframe>
+                                                            <iframe src={formData.imagen} className="w-100 h-100" style={{ border: 'none', borderRadius: 'inherit' }} allowFullScreen></iframe>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -231,9 +239,10 @@ const Crudubicacion = () => {
                                 </div>
                                 <div className="col-md-5 col-lg-4 p-4"><br />
                                     <div className="no-left-top-shadow rounded-3 ">
-                                        <div className="accordion " id="accordionExample">
+                                        <div className="accordion ">
                                             <div className="accordion-item border border-top-1 border-bottom-0 p-1"><br />
                                                 {datos.map((fila, index) => (
+
                                                     <h4 className="accordion-header" key={index}>
                                                         <button
                                                             className="accordion-button-no-icon collapsed rounded-5 bg-body border-0 focus-ring focus-ring-light px-4"
@@ -318,7 +327,7 @@ const Crudubicacion = () => {
                 <Modal size="lg" show={lgShow} onHide={() => setLgShow(false)} aria-labelledby="example-modal-sizes-title-lg" >
                     <Modal.Header closeButton>
                         <Modal.Title id="example-modal-sizes-title-lg">
-                            <h4 ><strong>MANTENIMIENTO:</strong>UBICACION</h4>
+                            <h4 ><strong>MANTENIMIENTO: </strong>UBICACIÓN</h4>
                         </Modal.Title>
                     </Modal.Header>
                     <Modal.Body>

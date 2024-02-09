@@ -31,7 +31,7 @@ const Ubicacion = () => {
                                 <div className="d-flex align-items-center">
 
                                     <div className="lh-1">
-                                        <h3 className="mb-2 text-secondary">PAGINA UBICACION</h3>
+                                        <h3 className="mb-2 text-secondary">PÁGINA UBICACIÓN</h3>
                                         <p>En el siguiente formulario podrás visualizar la página ubicacion como también editar sus datos.</p>
                                     </div>
                                 </div>

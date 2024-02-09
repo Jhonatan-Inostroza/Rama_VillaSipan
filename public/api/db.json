@@ -4240,10 +4240,10 @@
     {
       "id": 16,
       "categoria": "ubicacion",
-      "titulo": "Villa Sipán",
+      "titulo": "Villa ",
       "texto": "El siguiente video brinda una visión anticipada de lo que está por construirse.",
       "estado": "Dato Ubicación 01",
-      "imagen": "https://www.youtube.com/embed/q6IzqXFS-68?si=qsQoxSYXmuglYY9o"
+      "imagen": "https://www.youtube.com/embed/q6IzqXFS-68?si=qsQoxSYXmuglYY9oaaaa"
     },
     {
       "id": 17,
@@ -4261,7 +4261,7 @@
       "subtitulo": "",
       "categoria": "informacion",
       "imagen": "/images/icons/bannerprincipalvs.png",
-      "href": "https://drive.google.com/file/d/1PQu-sPMaYC6RHjsY3UY_6LKEQMUY_E0n/preview"
+      "href": ""
     },
     {
       "id": "UA01",
