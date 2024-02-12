@@ -27,15 +27,16 @@ const Infoubicacion = () => {
     const filteredMenus = datos.filter((fila) =>
         (fila.titulo.toLowerCase().includes(searchTerm.toLowerCase())));
 
-        useEffect(() => {
-            fetch('../../api/db.json')
-                .then(response => response.json())
-                .then(json => {
-                    const data: any[] = json.pgubicacionvs;
-                    setDatos(data);
-                })
-                .catch(error => console.error('Error al obtener datos:', error));
-        }, []);
+    useEffect(() => {
+        // Reemplazar la ruta relativa por la URL completa de json-server
+        fetch('http://localhost:3001/pgubicacionvs')
+            .then(response => response.json())
+            .then(data => {
+                setDatos(data);
+            })
+            .catch(error => console.error('Error al obtener datos:', error));
+    }, []);
+        
     
 
 

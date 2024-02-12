@@ -27,19 +27,21 @@ const CrudServicio = () => {
     const filteredMenus = datos.filter((fila) =>
         (fila.texto.toLowerCase().includes(searchTerm.toLowerCase()) || fila.titulo.toLowerCase().includes(searchTerm.toLowerCase())));
 
-        useEffect(() => {
-            const verificador = window.location.pathname.split('/');
-            const rptAPI = verificador[verificador.length - 1];
-            fetch('../../api/db.json')
-                .then(response => response.json())
-                .then(json => {
-                    const data: any[] = json.serviciosES;
-                    const filtrado = data.filter(fila => fila.categoria === rptAPI);
-                    setDatos(filtrado);
-                    
-                })
-                .catch(error => console.error('Tenemos un error', error));
-        }, []);
+    useEffect(() => {
+        // Obtener el último segmento de la ruta actual desde la URL
+        const verificador = window.location.pathname.split('/');
+        const rptAPI = verificador[verificador.length - 1];
+    
+        // Realizar la solicitud a json-server
+        fetch(`http://localhost:3001/serviciosES`)
+            .then(response => response.json())
+            .then(data => {
+                // Filtrar los datos basados en la categoría extraída de la URL
+                const filtrado = data.filter(fila => fila.categoria === rptAPI);
+                setDatos(filtrado);
+            })
+            .catch(error => console.error('Tenemos un error', error));
+    }, []);
 
 
 

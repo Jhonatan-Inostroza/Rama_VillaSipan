@@ -34,7 +34,7 @@ const Crudtexto = () => {
         e.preventDefault();
 
         try {
-            let apiUrl = 'http://localhost:3001/pginformacion';
+            let apiUrl = 'http://localhost:3001/pginformacionvs';
             let method = 'POST';
             if (selectedId) {
                 apiUrl += `/${selectedId}`;
@@ -54,7 +54,7 @@ const Crudtexto = () => {
 
             if (response.ok) {
                 console.log(`Información ${selectedId ? 'actualizada' : 'guardada'} con éxito.`);
-                fetch('http://localhost:3001/pginformacion')
+                fetch('http://localhost:3001/pginformacionvs')
                     .then(response => response.json())
                     .then(data => setDatos(data))
                     .catch(error => console.error('Error al obtener datos:', error));
@@ -67,18 +67,14 @@ const Crudtexto = () => {
     };
 
     useEffect(() => {
-        const verificador = window.location.pathname.split('/');
-        const rptAPI = verificador[verificador.length - 1];
-    
-        fetch('../../api/db.json')
-          .then(response => response.json())
-          .then(json => {
-            const data: any[] = json.pginformacionvs;
-            const filtrado = data.filter(fila => fila.categoria === rptAPI);
-            setDatos(filtrado);
-          })
-          .catch(error => console.error('Tenemos un error', error));
-      }, []);
+        // Cambiar la ruta para apuntar a la dirección de json-server
+        fetch('http://localhost:3001/pginformacionvs')
+            .then(response => response.json())
+            .then(data => {
+                setDatos(data);
+            })
+            .catch(error => console.error('Error al obtener datos:', error));
+    }, []);
 
     const procesarContenidoQuill = (contenidoQuill) => {
         return contenidoQuill;
@@ -166,7 +162,7 @@ const Crudtexto = () => {
                                         </Row>
                                         <Row className="mb-3">
                                             <div className="col-md-12 col-12 text-end">
-                                                <Button className='btn btn-primary m-1' type='submit' onClick={()=>handleSubmit}>Guardar</Button>
+                                                <Button className='btn btn-primary m-1' type='button' onClick={handleSubmit}>Guardar</Button>
                                                 <Button className='btn btn-primary m-1' type='reset' onClick={()=>handleCleanClick()}>Limpiar</Button>
                                             </div>
                                         </Row>

@@ -28,17 +28,19 @@ const Crudubicacion = () => {
         (fila.titulo.toLowerCase().includes(searchTerm.toLowerCase())));
 
     useEffect(() => {
+        // Obtener el último segmento de la ruta actual desde la URL
         const verificador = window.location.pathname.split('/');
-        const url = verificador[verificador.length - 1];
-        fetch('../../api/db.json')
+        const rptAPI = verificador[verificador.length - 1];
+    
+        // Realizar la solicitud a json-server
+        fetch(`http://localhost:3001/serviciosES`)
             .then(response => response.json())
-            .then(json => {
-                const data: any[] = json.serviciosES;
-                const filtrado = data.filter(fila => fila.categoria === url);
+            .then(data => {
+                // Filtrar los datos basados en la categoría extraída de la URL
+                const filtrado = data.filter(fila => fila.categoria === rptAPI);
                 setDatos(filtrado);
-                setUbicacion(url);
             })
-            .catch(error => console.error('Error al obtener datos:', error));
+            .catch(error => console.error('Tenemos un error', error));
     }, []);
     const handleRegistrarClick = () => {
         setLgShow(true);
@@ -59,13 +61,14 @@ const Crudubicacion = () => {
         fetch(`http://localhost:3001/serviciosES/${id}`)
             .then((response) => response.json())
             .then((data) => {
+                //console.log('INGRESO A EDITAR');
                 setFormData({
                     id: data.id,
                     categoria: data.categoria,
                     titulo: data.titulo,
                     texto: data.texto,
-                    estado: data.estado,
-                    imagen: data.imagen
+                    imagen: data.imagen,
+                    estado: data.estado
                 });
             })
             .catch((error) => {
@@ -75,7 +78,7 @@ const Crudubicacion = () => {
 
     const handleEnviarIdClick = (id) => {
         // Asegúrate de que la URL sea la correcta
-        fetch(`../../api/db.json`) //
+        fetch(`http://localhost:3001/serviciosES/${id}`) //
         .then((response) => response.json())
         .then((json) => {
             const data: any[] = json.serviciosES;

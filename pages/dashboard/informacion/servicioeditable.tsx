@@ -52,7 +52,7 @@ const Servicioeditable = () => {
                 setRecurso2(value);
                 break;
             case 'categoria':
-                setRecurso2(value);
+                setCategoria(value);
                 break;
             default:
                 setTitle(value);
@@ -73,57 +73,59 @@ const Servicioeditable = () => {
         }
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const response = await fetch(`http://localhost:3001/pginformacionvs/${selectedId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    id: selectedId,
-                    content: quill.root.innerHTML,
-                    recurso1: recurso1,
-                    recurso2: recurso2,
-                    categoria: categoria,
-                    title: title
-                }),
-            });
-
-            if (response.ok) {
-                const verificador = window.location.pathname.split('/');
-                const rptAPI = verificador[verificador.length - 1];
-                fetch('http://localhost:3001/pginformacionvs')
-                    .then(response => response.json())
-                    .then(data => {
-                        const filtrado = data.filter(fila => fila.categoria === rptAPI);
-                        setDatos(filtrado);
-                        setBanners(rptAPI);
-                    })
-                    .catch(error => console.error('Tenemos un error', error));
-            } else {
-                console.error('Error al actualizar la información.');
+    const handleSubmit = async () => {
+        console.log(' asdadsadasdasdasd');
+        if (selectedId) {
+            try {
+                const response = await fetch(`http://localhost:3001/pginformacionvs/${selectedId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        id: selectedId,
+                        content: quill.root.innerHTML,
+                        recurso1: recurso1,
+                        recurso2: recurso2,
+                        categoria: categoria,
+                        title: title
+                    }),
+                });
+    
+                if (response.ok) {
+                    const verificador = window.location.pathname.split('/');
+                    const rptAPI = verificador[verificador.length - 1];
+                    fetch('http://localhost:3001/pginformacionvs')
+                        .then(response => response.json())
+                        .then(data => {
+                            const filtrado = data.filter(fila => fila.categoria === rptAPI);
+                            setDatos(filtrado);
+                            setBanners(rptAPI);
+                        })
+                        .catch(error => console.error('Tenemos un error', error));
+                } else {
+                    console.error('Error al actualizar la información.');
+                }
+            } catch (error) {
+                console.error('Error de red:', error);
             }
-        } catch (error) {
-            console.error('Error de red:', error);
+        } else {
+            alert('Por favor, seleccione un servicio');
         }
     };
 
     useEffect(() => {
         const verificador = window.location.pathname.split('/');
         const rptAPI = verificador[verificador.length - 1];
-        fetch('../../api/db.json')
+        fetch('http://localhost:3001/pginformacionvs')
             .then(response => response.json())
-            .then(json => {
-                const data: any[] = json.pginformacionvs;
+            .then(data => { // Directamente usamos 'data' si la respuesta ya es el arreglo
                 const filtrado = data.filter(fila => fila.categoria === rptAPI);
                 setDatos(filtrado);
-                
             })
             .catch(error => console.error('Tenemos un error', error));
     }, []);
-
+    
     const procesarContenidoQuill = (contenidoQuill) => {
         return contenidoQuill;
     };
@@ -284,7 +286,8 @@ const Servicioeditable = () => {
                                         </Row>
                                         <Row className="mb-3">
                                             <div className="col-md-12 col-12 text-end">
-                                                <Button className='btn btn-primary m-1' type='submit' onClick={()=>handleSubmit}>Guardar</Button>
+                                                <Button className='btn btn-primary m-1' type='submit' onClick={handleSubmit}>Guardar</Button>
+
                                                 <Button className='btn btn-primary m-1' type='reset' onClick={()=>handleCleanClick()}>Limpiar</Button>
                                             </div>
                                         </Row>

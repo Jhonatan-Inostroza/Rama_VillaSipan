@@ -35,15 +35,16 @@ const Plano = () => {
     const filteredMenus = datos.filter((fila) =>
         (fila.id.toLowerCase().includes(searchTerm.toLowerCase())));
 
-        useEffect(() => {
-            fetch('../../api/db.json')
-                .then(response => response.json())
-                .then(json => {
-                    const data: any[]=json.pgconfiplanovs;
-                    setDatos(data);
-                })
-                .catch(error => console.error('Error al obtener datos:', error));
-        }, []);
+    useEffect(() => {
+        // Cambiar la ruta para apuntar a la dirección de json-server
+        fetch('http://localhost:3001/pgconfiplanovs')
+            .then(response => response.json())
+            .then(data => {
+                setDatos(data);
+            })
+            .catch(error => console.error('Error al obtener datos:', error));
+    }, []);
+        
 
     const handleRegistrarClick = () => {
         setLgShow(true)
@@ -63,63 +64,63 @@ const Plano = () => {
     const handleEditClick = (id) => {
         setEditItemId(id);
         setLgShow(true);
-
         fetch(`http://localhost:3001/pgconfiplanovs/${id}`)
+          .then((response) => response.json())
+          .then((data) => {
+            setFormData({
+              id: data.id,
+              coordenadas: data.coordenadas,
+              color: data.color,
+              lote: data.lote,
+              manzana: data.manzana,
+              areaLote: data.areaLote,
+              referencia: data.referencia,
+              precio: data.precio,
+              estado: data.estado
+            });
+          })
+          .catch((error) => {
+            console.error('Error al obtener datos para editar:', error);
+          });
+      };
+    
+      const handleSaveClick = () => {
+        if (editItemId) {
+          console.log(`handleSaveClick llamado ${editItemId}`);
+          const dataToUpdate = { ...formData, id: editItemId };
+          fetch(`http://localhost:3001/pgconfiplanovs/${editItemId}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(dataToUpdate),
+          })
             .then((response) => response.json())
             .then((data) => {
-                setFormData({
-                    id: data.id,
-                    coordenadas: data.coordenadas,
-                    color: data.color,
-                    lote: data.lote,
-                    manzana: data.manzana,
-                    areaLote: data.areaLote,
-                    referencia: data.referencia,
-                    precio: data.precio,
-                    estado: data.estado
-                });
+              console.log('Datos actualizados:', data);
             })
             .catch((error) => {
-                console.error('Error al obtener datos para editar:', error);
+              console.error('Error al actualizar datos:', error);
             });
-    };
-
-    const handleSaveClick = () => {
-        if (editItemId) {
-            fetch(`http://localhost:3001/pgconfiplanovs/${editItemId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                    console.log('Datos actualizados:', data);
-                })
-                .catch((error) => {
-                    console.error('Error al actualizar datos:', error);
-                });
-
-            setEditItemId(null);
+    
+          setEditItemId(null);
         } else {
-            fetch('http://localhost:3001/pgconfiplanovs', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
+          fetch('http://localhost:3001/pgconfiplanovs', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              console.log('Datos guardados:', data);
             })
-                .then((response) => response.json())
-                .then((data) => {
-                    console.log('Datos guardados:', data);
-
-                })
-                .catch((error) => {
-                    console.error('Error al guardar datos:', error);
-                });
+            .catch((error) => {
+              console.error('Error al guardar datos:', error);
+            });
         }
-    };
+      };
 
     const handleDeleteClick = (id) => {
         setIdToDelete(id);

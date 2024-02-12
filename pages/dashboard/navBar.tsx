@@ -27,40 +27,43 @@ const Navbar = () => {
   //  const filteredMenus = datos.filter((fila) =>
        // (fila.texto.toLowerCase().includes(searchTerm.toLowerCase()) || fila.href.toLowerCase().includes(searchTerm.toLowerCase())));
 
-       useEffect(() => {
-        fetch('../api/db.json')
+    useEffect(() => {
+        fetch('http://localhost:3001/pgmenuvs')
             .then(response => response.json())
-            .then(json => {
-                const data: any[] = json.pgmenuvs;
+            .then(data => {
                 setDatos(data);
             })
             .catch(error => console.error('Error al obtener datos:', error));
     }, []);
+    
 
 
 
     const handleEditClick = (id) => {
         setEditItemId(id);
         setLgShow(true);
-
+    
+        // Usa directamente `id` aquí, ya que `editItemId` aún no se ha actualizado
         fetch(`http://localhost:3001/pgmenuvs/${id}`)
             .then((response) => response.json())
-            .then((data) => {
+            .then((obj) => {
+                // Asumiendo que `obj` ya es el objeto que deseas editar
                 setFormData({
-                    id: data.id,
-                    href: data.href,
-                    categoria: data.categoria,
-                    texto: data.texto
+                    id: obj.id,
+                    href: obj.href,
+                    categoria: obj.categoria,
+                    texto: obj.texto
                 });
             })
             .catch((error) => {
                 console.error('Error al obtener datos para editar:', error);
             });
     };
+    
 
     const handleSaveClick = () => {
         if (editItemId) {
-            fetch(`http://localhost:3001/pgmenuvs/${editItemId}`, {
+            fetch(`http://localhost:3001/pgmenuvs/${editItemId}`, { // Corrección aquí
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -70,6 +73,7 @@ const Navbar = () => {
                 .then((response) => response.json())
                 .then((data) => {
                     console.log('Datos actualizados:', data);
+                    // Aquí deberías también actualizar tu estado local o refrescar los datos mostrados si es necesario
                 })
                 .catch((error) => {
                     console.error('Error al actualizar datos:', error);
@@ -86,12 +90,14 @@ const Navbar = () => {
                 .then((response) => response.json())
                 .then((data) => {
                     console.log('Datos guardados:', data);
+                    // Similarmente, actualiza el estado local o refresca los datos aquí si es necesario
                 })
                 .catch((error) => {
                     console.error('Error al guardar datos:', error);
                 });
         }
     };
+    
 
     const handleDeleteClick = (id) => {
         setIdToDelete(id);

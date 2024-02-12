@@ -26,39 +26,43 @@ const GBbanner = () => {
     const filteredMenus = datos.filter((fila) =>
         (fila.titulo.toLowerCase().includes(searchTerm.toLowerCase()) || fila.subtitulo.toLowerCase().includes(searchTerm.toLowerCase()) || fila.categoria.toLowerCase().includes(searchTerm.toLowerCase())));
 
-        useEffect(() => {
-            fetch('../../api/db.json')
-                .then(response => response.json())
-                .then(json => {
-                    const data: any[] = json.pgbannervs;
-                    setDatos(data);}
-                    )
-                .catch(error => console.error('Error al obtener datos:', error));
-        }, []);
+    useEffect(() => {
+        fetch('http://localhost:3001/pgbannervs')
+            .then(response => response.json())
+            .then(data => {
+                setDatos(data);
+            })
+            .catch(error => console.error('Error al obtener datos:', error));
+    }, []);
 
     const handleEditClick = (id) => {
         setEditItemId(id);
         setLgShow(true);
-
+    
+        // Asegúrate de que esta URL apunte a tu instancia de json-server
         fetch(`http://localhost:3001/pgbannervs/${id}`)
             .then((response) => response.json())
-            .then((data) => {
+            .then((itemToEdit) => {
+                // Asumiendo que json-server te devuelve directamente el objeto a editar
                 setFormData({
-                    id: data.id,
-                    titulo: data.titulo,
-                    subtitulo: data.subtitulo,
-                    categoria: data.categoria,
-                    imagen: data.imagen,
-                    href: data.href
+                    id: itemToEdit.id,
+                    titulo: itemToEdit.titulo,
+                    subtitulo: itemToEdit.subtitulo,
+                    categoria: itemToEdit.categoria,
+                    imagen: itemToEdit.imagen,
+                    href: itemToEdit.href
                 });
             })
             .catch((error) => {
                 console.error('Error al obtener datos para editar:', error);
             });
     };
+    
 
     const handleSaveClick = () => {
+        console.log('Aun no entra al IF');
         if (editItemId) {
+            console.log(`Actualizando elemento con ID: ${editItemId}`);
             fetch(`http://localhost:3001/pgbannervs/${editItemId}`, {
                 method: 'PUT',
                 headers: {
@@ -66,15 +70,17 @@ const GBbanner = () => {
                 },
                 body: JSON.stringify(formData),
             })
-                .then((response) => response.json())
-                .then((data) => {
-                    console.log('Datos actualizados:', data);
-                })
-                .catch((error) => {
-                    console.error('Error al actualizar datos:', error);
-                });
-            setEditItemId(null);
+            .then((response) => response.json())
+            .then((data) => {
+                console.log('Datos actualizados:', data);
+                // Aquí deberías recargar los datos o actualizar el estado para reflejar los cambios
+            })
+            .catch((error) => {
+                console.error('Error al actualizar datos:', error);
+            });
+            setEditItemId(null); // Considera resetear este estado como parte de una operación de limpieza después de recibir la respuesta
         } else {
+            console.log('Creando nuevo elemento');
             fetch('http://localhost:3001/pgbannervs', {
                 method: 'POST',
                 headers: {
@@ -82,114 +88,71 @@ const GBbanner = () => {
                 },
                 body: JSON.stringify(formData),
             })
-                .then((response) => response.json())
-                .then((data) => {
-                    console.log('Datos guardados:', data);
-                })
-                .catch((error) => {
-                    console.error('Error al guardar datos:', error);
-                });
+            .then((response) => response.json())
+            .then((data) => {
+                console.log('Datos guardados:', data);
+                // Similarmente, actualiza el estado o recarga los datos aquí
+            })
+            .catch((error) => {
+                console.error('Error al guardar datos:', error);
+            });
         }
     };
-
+    
     const handleDeleteClick = (id) => {
         setIdToDelete(id);
-            // Primera ventana emergente adicional con mensaje "XXXXX"
-        const swalInitialWarning = Swal.mixin({
+       
+        const swalWithBootstrapButtons = Swal.mixin({
             customClass: {
-                confirmButton: "btn btn-warning"
+                confirmButton: "btn btn-success",
+                cancelButton: "btn btn-danger"
             },
             buttonsStyling: false
         });
-
-        swalInitialWarning.fire({
-            title: "XXXXX",
-            text: "Estás a punto de eliminar un elemento, haz clic en 'Continuar' para proceder.",
-            icon: "info",
+        swalWithBootstrapButtons.fire({
+            title: "¿Seguro de querer eliminar?",
+            text: "Si elimina, no se puede deshacer los cambios",
+            icon: "warning",
             showCancelButton: true,
-            confirmButtonText: "Continuar",
+            confirmButtonText: "Eliminar",
             cancelButtonText: "Cancelar",
             reverseButtons: true
-        }).then((initialResult) => {
-            if (initialResult.isConfirmed) {
-
-
-
-
-
-
-
-
-        
-                const swalWithBootstrapButtons = Swal.mixin({
-                    customClass: {
-                        confirmButton: "btn btn-success",
-                        cancelButton: "btn btn-danger"
-                    },
-                    buttonsStyling: false
-                });
+        }).then((result) => {
+            if (result.isConfirmed) {
                 swalWithBootstrapButtons.fire({
-                    title: "¿Seguro de querer eliminar?",
-                    text: "Si elimina, no se puede deshacer los cambios",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonText: "Eliminar",
-                    cancelButtonText: "Cancelar",
-                    reverseButtons: true
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        swalWithBootstrapButtons.fire({
-                            title: "Operación Existosa!",
-                            text: "Su archivo ha sido eliminado.",
-                            icon: "success"
-                        });
-                        fetch(`http://localhost:3001/pgbannervs/${id}`, {
-                            method: 'DELETE',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify(formData),
-                        })
+                    title: "Operación Existosa!",
+                    text: "Su archivo ha sido eliminado.",
+                    icon: "success"
+                });
+                fetch(`http://localhost:3001/pgbannervs/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData),
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        console.log('Datos guardados:', data);
+                        fetch('http://localhost:3001/pgbannervs')
                             .then((response) => response.json())
-                            .then((data) => {
-                                console.log('Datos guardados:', data);
-                                fetch('http://localhost:3001/pgbannervs')
-                                    .then((response) => response.json())
-                                    .then((menusData) => {
-                                        setDatos(menusData);
-                                    })
-                                    .catch((error) => {
-                                        console.error('Error al actualizar menus:', error);
-                                    });
+                            .then((menusData) => {
+                                setDatos(menusData);
                             })
                             .catch((error) => {
-                                console.error('Error al guardar datos:', error);
+                                console.error('Error al actualizar menus:', error);
                             });
-                    } else if (
-                        result.dismiss === Swal.DismissReason.cancel
-                    ) {
-                        swalWithBootstrapButtons.fire({
-                            title: "Operación cancelada",
-                            text: "Archivo aún conservado",
-                            icon: "error"
-                        });
-                    }
-                });
-
-
-
-
-
-
-
-
+                    })
+                    .catch((error) => {
+                        console.error('Error al guardar datos:', error);
+                    });
             } else if (
-                initialResult.dismiss === Swal.DismissReason.cancel
+                result.dismiss === Swal.DismissReason.cancel
             ) {
-                swalInitialWarning.fire({
+                swalWithBootstrapButtons.fire({
                     title: "Operación cancelada",
-                    text: "No se realizaron cambios",
-                    icon: "info"
+                    text: `Archivo aún conservado, ID: ${id}`, // Aquí se incluye el ID
+                    icon: "error"
                 });
             }
         });
